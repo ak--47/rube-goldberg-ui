@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Red Pill or Blue Pill?</title>
+    <style>
+        body {
+            font-family: "Courier New", monospace;
+            background-color: #000;
+            color: #0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+            transition: background-color 0.5s;
+        }
+
+        .container {
+            text-align: center;
+            position: relative;
+            width: 800px;
+            height: 600px;
+        }
+
+        .pill {
+            font-size: 24px;
+            padding: 15px 30px;
+            margin: 20px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .pill:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 20px currentColor;
+        }
+
+        #redPill {
+            background-color: #ff0000;
+            color: #fff;
+        }
+
+        #bluePill {
+            background-color: #0000ff;
+            color: #fff;
+        }
+
+        .element {
+            position: absolute;
+            font-size: 16px;
+            padding: 10px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            cursor: move;
+        }
+
+        #knob {
+			top: 50px;
+			left: 50px;
+			width: 50px;
+			height: 50px;
+			background: radial-gradient(circle, transparent 40%, #ff0000 40%),
+				/* Red outer circle */
+				linear-gradient(to bottom, transparent 45%, #00ff00 45%, #00ff00 55%, transparent 55%),
+				/* Green vertical line */
+				linear-gradient(to right, transparent 45%, #0000ff 45%, #0000ff 55%, transparent 55%);
+			/* Blue horizontal line */
+			background-size: 100% 100%, 100% 100%, 100% 100%;
+			background-position: center, center, center;
+			background-repeat: no-repeat;
+			border-radius: 50%;
+			transform: rotate(0deg);
+			transition: transform 0.4s;
+        }
+
+        #dropdown1 {
+            top: 50px;
+            right: 50px;
+        }
+
+        #dropdown2 {
+            top: 150px;
+            left: 50px;
+        }
+
+        #dropdown3 {
+            bottom: 50px;
+            right: 50px;
+        }
+
+        #toggle {
+            bottom: 50px;
+            left: 50px;
+        }
+
+        .slider-container {
+            position: absolute;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 200px;
+            height: 40px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            cursor: move;
+        }
+
+        .slider {
+            width: 150px;
+            cursor: pointer;
+        }
+
+        #slider1-container {
+            top: 250px;
+            left: 50px;
+        }
+
+        #slider2-container {
+            top: 50px;
+            left: 250px;
+        }
+
+        #slider3-container {
+            bottom: 150px;
+            right: 50px;
+        }
+
+        #counter {
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 36px;
+            z-index: -1;
+        }
+
+        .matrix-rain {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -2;
+        }
+
+        /* New styles for additional elements */
+        #colorWheel {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: conic-gradient(red, yellow, lime, aqua, blue, magenta, red);
+            cursor: pointer;
+        }
+
+        #joystick {
+            width: 100px;
+            height: 100px;
+            background-color: #333;
+            border-radius: 50%;
+            position: relative;
+            cursor: move;
+        }
+
+        #joystickKnob {
+            width: 40px;
+            height: 40px;
+            background-color: #666;
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+        }
+
+        .modal-content {
+            background-color: #000;
+            color: #0f0;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #0f0;
+            width: 50%;
+            text-align: center;
+        }
+
+        .close {
+            color: #0f0;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <canvas class="matrix-rain"></canvas>
+
+    <div class="container">
+        <!-- TITLE -->
+        <h1>Choose Your Destiny</h1>
+
+        <!-- MAIN SECTION -->
+        <button id="redPill" class="pill">Red Pill</button>
+        <button id="bluePill" class="pill">Blue Pill</button>
+
+        <!-- umm... controls -->
+        <div id="knob" class="element"></div>
+        <select id="dropdown1" class="element">
+            <option>Select a fruit</option>
+            <option>Apple</option>
+            <option>Banana</option>
+            <option>Cherry</option>
+            <option>Durian</option>
+        </select>
+        <select id="dropdown2" class="element">
+            <option>Choose an element</option>
+            <option>Fire</option>
+            <option>Water</option>
+            <option>Earth</option>
+            <option>Air</option>
+        </select>
+        <select id="dropdown3" class="element">
+            <option>Pick a planet</option>
+            <option>Mars</option>
+            <option>Venus</option>
+            <option>Jupiter</option>
+            <option>Saturn</option>
+        </select>
+        <button id="toggle" class="element">Toggle Reality</button>
+        <div id="slider1-container" class="slider-container">
+            <input type="range" id="slider1" class="slider" min="0" max="100" value="50" />
+        </div>
+        <div id="slider2-container" class="slider-container">
+            <input type="range" id="slider2" class="slider" min="0" max="100" value="50" />
+        </div>
+        <div id="slider3-container" class="slider-container">
+            <input type="range" id="slider3" class="slider" min="0" max="100" value="50" />
+        </div>
+
+        <!-- the all important counter of things... -->
+        <div id="counter" class="element">0</div>
+
+        <!-- New elements -->
+        <div id="colorWheel" class="element" style="top: 300px; right: 50px;"></div>
+        <div id="joystick" class="element" style="bottom: 100px; left: 200px;">
+            <div id="joystickKnob"></div>
+        </div>
+        <button id="chaosButton" class="element" style="top: 200px; right: 200px;">Unleash Chaos</button>
+        <input type="text" id="glitchInput" class="element" style="bottom: 200px; left: 300px;" placeholder="Type to glitch">
+
+        <!-- less important stuff -->
+        <div>
+            <button class="mystery">mystery</button>
+            <button class="intrigue">intrigue</button>
+            <button class="suspense">suspense</button>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <div id="redPillModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <p>You've chosen to see how deep the rabbit hole goes.</p>
+        </div>
+    </div>
+
+    <div id="bluePillModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <p>You've chosen to remain in blissful ignorance.</p>
+        </div>
+    </div>
+
+    <script>
+        // Matrix rain effect (unchanged)
+        const canvas = document.querySelector(".matrix-rain");
+        const ctx = canvas.getContext("2d");
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const katakana = "アァカサタナハマヤャラワガザダバパイィキシチニヒミリヰギジヂビピウゥクスツヌフムユュルグズブヅプエェケセテネヘメレヱゲゼデベペオォコソトノホモヨョロヲゴゾドボポヴッン";
+        const latin = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        const nums = "0123456789";
+        const alphabet = katakana + latin + nums;
+
+        const fontSize = 16;
+        const columns = canvas.width / fontSize;
+
+        const rainDrops = [];
+
+        for (let x = 0; x < columns; x++) {
+            rainDrops[x] = 1;
+        }
+
+        const draw = () => {
+            ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.fillStyle = "#0f0";
+            ctx.font = fontSize + "px monospace";
+
+            for (let i = 0; i < rainDrops.length; i++) {
+                const text = alphabet.charAt(Math.floor(Math.random() * alphabet.length));
+                ctx.fillText(text, i * fontSize, rainDrops[i] * fontSize);
+
+                if (rainDrops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                    rainDrops[i] = 0;
+                }
+                rainDrops[i]++;
+            }
+        };
+
+        setInterval(draw, 30);
+
+        // Interactive elements
+        const redPill = document.getElementById("redPill");
+        const bluePill = document.getElementById("bluePill");
+        const knob = document.getElementById("knob");
+        const dropdown1 = document.getElementById("dropdown1");
+        const dropdown2 = document.getElementById("dropdown2");
+        const dropdown3 = document.getElementById("dropdown3");
+        const toggle = document.getElementById("toggle");
+        const slider1 = document.getElementById("slider1");
+        const slider2 = document.getElementById("slider2");
+        const slider3 = document.getElementById("slider3");
+        const counter = document.getElementById("counter");
+        const colorWheel = document.getElementById("colorWheel");
+        const joystick = document.getElementById("joystick");
+        const joystickKnob = document.getElementById("joystickKnob");
+        const chaosButton = document.getElementById("chaosButton");
+        const glitchInput = document.getElementById("glitchInput");
+
+        let count = 0;
+        let reality = true;
+
+        // Modal functionality
+        const redPillModal = document.getElementById("redPillModal");
+        const bluePillModal = document.getElementById("bluePillModal");
+        const closeButtons = document.getElementsByClassName("close");
+
+        function openModal(modal) {
+            modal.style.display = "block";
+        }
+
+        function closeModal(modal) {
+            modal.style.display = "none";
+        }
+
+        redPill.addEventListener("click", () => openModal(redPillModal));
+        bluePill.addEventListener("click", () => openModal(bluePillModal));
+
+        for (let closeButton of closeButtons) {
+            closeButton.addEventListener("click", () => {
+                closeModal(redPillModal);
+                closeModal(bluePillModal);
+            });
+        }
+
+        window.addEventListener("click", (event) => {
+            if (event.target == redPillModal) closeModal(redPillModal);
+            if (event.target == bluePillModal) closeModal(bluePillModal);
+        });
+
+        knob.addEventListener("click", () => {
+            const currentRotation = parseInt(knob.style.transform.replace("rotate(", "").replace("deg)", "") || 0);
+            knob.style.transform = `rotate(${currentRotation + random()}deg)`;
+        });
+
+        function getRandomColor() {
+            return "#" + Math.floor(Math.random() * 16777215).toString(16);
+        }
+
+        function random(min = 25, max = 360) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        [dropdown1, dropdown2, dropdown3].forEach((dropdown) => {
+            dropdown.addEventListener("change", () => {
+                document.body.style.backgroundColor = getRandomColor();
+            });
+        });
+
+        toggle.addEventListener("click", () => {
+            reality = !reality;
+            document.body.style.filter = reality ? "none" : "invert(100%)";
+        });
+
+        slider1.addEventListener("input", () => {
+            document.body.style.opacity = slider1.value / 100;
+        });
+
+        slider2.addEventListener("input", () => {
+            document.documentElement.style.setProperty("--hue-rotate", `${slider2.value * 3.6}deg`);
+            document.body.style.filter = `hue-rotate(var(--hue-rotate))`;
+        });
+
+        slider3.addEventListener("input", () => {
+            document.documentElement.style.setProperty("--blur", `${slider3.value / 10}px`);
+            canvas.style.filter = `blur(var(--blur))`;
+        });
+
+        setInterval(() => {
+            count++;
+            counter.textContent = count;
+        }, 1000);
+
+        // New element functionality
+        colorWheel.addEventListener("click", () => {
+            const hue = Math.floor(Math.random() * 360);
+            document.body.style.backgroundColor = `hsl(${hue}, 100%, 50%)`;
+        });
+
+        let isDraggingJoystick = false;
+
+        joystick.addEventListener("mousedown", (e) => {
+            isDraggingJoystick = true;
+            moveJoystickKnob(e);
+        });
+
+        document.addEventListener("mousemove", (e) => {
+            if (isDraggingJoystick) {
+                moveJoystickKnob(e);
+            }
+        });
+
+        document.addEventListener("mouseup", () => {
+            isDraggingJoystick = false;
+            resetJoystickKnob();
+        });
+
+        function moveJoystickKnob(e) {
+            const joystickRect = joystick.getBoundingClientRect();
+            const centerX = joystickRect.width / 2;
+            const centerY = joystickRect.height / 2;
+            const maxDistance = joystickRect.width / 2 - joystickKnob.offsetWidth / 2;
+
+            let x = e.clientX - joystickRect.left - centerX;
+            let y = e.clientY - joystickRect.top - centerY;
+
+            const distance = Math.sqrt(x * x + y * y);
+            if (distance > maxDistance) {
+                const angle = Math.atan2(y, x);
+                x = Math.cos(angle) * maxDistance;
+                y = Math.sin(angle) * maxDistance;
+            }
+
+            joystickKnob.style.transform = `translate(${x}px, ${y}px)`;
+
+            // Apply some effect based on joystick position
+            const xPercent = x / maxDistance;
+            const yPercent = y / maxDistance;
+            document.body.style.transform = `skew(${xPercent * 10}deg, ${yPercent * 10}deg)`;
+        }
+
+        function resetJoystickKnob() {
+            joystickKnob.style.transform = 'translate(0, 0)';
+            document.body.style.transform = 'skew(0, 0)';
+        }
+
+        chaosButton.addEventListener("click", () => {
+            const elements = document.querySelectorAll('.element');
+            elements.forEach(el => {
+                el.style.transition = 'all 0.5s';
+                el.style.transform = `translate(${random(-100, 100)}px, ${random(-100, 100)}px) rotate(${random()}deg)`;
+                setTimeout(() => {
+                    el.style.transition = 'none';
+                }, 500);
+            });
+        });
+
+        glitchInput.addEventListener("input", (e) => {
+            const text = e.target.value;
+            const glitchedText = text.split('').map(char => {
+                return Math.random() > 0.7 ? String.fromCharCode(char.charCodeAt(0) + random(-5, 5)) : char;
+            }).join('');
+            e.target.value = glitchedText;
+        });
+
+        // Make elements draggable
+        const draggables = document.querySelectorAll(".element, .slider-container");
+
+        draggables.forEach((draggable) => {
+            let isDragging = false;
+            let startX, startY, startLeft, startTop;
+
+            draggable.addEventListener("mousedown", (e) => {
+                if (e.target.tagName === "SELECT" || e.target.tagName === "INPUT") {
+                    return;
+                }
+                isDragging = true;
+                startX = e.clientX;
+                startY = e.clientY;
+                startLeft = parseInt(window.getComputedStyle(draggable).left);
+                startTop = parseInt(window.getComputedStyle(draggable).top);
+                e.preventDefault();
+            });
+
+            document.addEventListener("mousemove", (e) => {
+                if (isDragging) {
+                    const deltaX = e.clientX - startX;
+                    const deltaY = e.clientY - startY;
+                    draggable.style.left = startLeft + deltaX + "px";
+                    draggable.style.top = startTop + deltaY + "px";
+                }
+            });
+
+            document.addEventListener("mouseup", () => {
+                isDragging = false;
+            });
+        });
+    </script>
+</body>
+
+</html>

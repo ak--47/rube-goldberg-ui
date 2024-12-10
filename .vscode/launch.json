@@ -1,0 +1,11 @@
+{
+	"configurations": [
+		{
+            "name": "go",
+            "type": "chrome",
+            "request": "launch",
+            "file": "${file}",
+            "webRoot": "${workspaceFolder}"
+        }
+	]
+}
